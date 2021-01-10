@@ -12,15 +12,17 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Invoker {
     public static void invoke(Class<?> clazz, String input){
-        List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
-        ListMultimap<Method,Object> mapListObject = ArrayListMultimap.create();
-        methods.stream()
+        List<Method> methods = Arrays
+                .stream(clazz.getDeclaredMethods())
                 .filter(Invoker::isPublicMethod)
-                .forEach(method ->{
+                .collect(Collectors.toList());
+        ListMultimap<Method,Object> mapListObject = ArrayListMultimap.create();
+        methods.forEach(method ->{
                     List<Class<?>> parameterClasses = Arrays.asList(method.getParameterTypes());
                     parameterClasses.forEach(parameterClass ->{
                         ValueHandler valueHandler = ValueHandlerUtils.getObject(parameterClass);

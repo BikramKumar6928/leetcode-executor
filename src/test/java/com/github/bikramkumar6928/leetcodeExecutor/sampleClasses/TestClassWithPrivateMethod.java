@@ -6,6 +6,6 @@ public class TestClassWithPrivateMethod {
     }
 
     private String value(){
-        return "Hello";
+        return "Random String";
     }
 }

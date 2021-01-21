@@ -12,6 +12,12 @@ public class InvokerTest {
     }
 
     @Test
+    public void testInvokerWithSpaceInInput(){
+        Invoker.invoke(TestClass.class, "   1 \n" +
+                "[1,2,3]");
+    }
+
+    @Test
     public void testInvokerWithOnePublicMethodAndOnePrivateMethod(){
         Invoker.invoke(TestClassWithPrivateMethod.class, "");
     }

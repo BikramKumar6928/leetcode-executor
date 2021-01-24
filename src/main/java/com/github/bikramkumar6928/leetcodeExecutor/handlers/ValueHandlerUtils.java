@@ -31,7 +31,7 @@ public class ValueHandlerUtils {
 
     @NonNull
     private static List<ValueHandler> calculateValueHandlers() {
-        Reflections reflections = new Reflections("com.github.bikramkumar6928.leetcodeExecutor.handlers.impl");
+        Reflections reflections = new Reflections("com.github.bikramkumar6928.leetcodeExecutor.handlers");
         Set<Class<? extends ValueHandler>> valueHandlerSet = reflections.getSubTypesOf(ValueHandler.class);
         return valueHandlerSet
                 .stream()

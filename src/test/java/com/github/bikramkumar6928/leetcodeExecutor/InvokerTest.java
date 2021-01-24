@@ -2,6 +2,7 @@ package com.github.bikramkumar6928.leetcodeExecutor;
 
 import com.github.bikramkumar6928.leetcodeExecutor.sampleClasses.TestClass;
 import com.github.bikramkumar6928.leetcodeExecutor.sampleClasses.TestClassWithPrivateMethod;
+import com.github.bikramkumar6928.leetcodeExecutor.sampleClasses.TestClassWithStringParameter;
 import org.junit.Test;
 
 public class InvokerTest {
@@ -20,5 +21,10 @@ public class InvokerTest {
     @Test
     public void testInvokerWithOnePublicMethodAndOnePrivateMethod(){
         Invoker.invoke(TestClassWithPrivateMethod.class, "");
+    }
+
+    @Test
+    public void testInvokerWithStringInput(){
+        Invoker.invoke(TestClassWithStringParameter.class, "\"sample stdring\"");
     }
 }

@@ -5,6 +5,7 @@ import lombok.NonNull;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -36,10 +37,15 @@ public class ValueHandlerUtils {
         return valueHandlerSet
                 .stream()
                 .map(ValueHandlerUtils::getObjectFromMethod)
+//                Remove if there were errors while creating the object
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     private static ValueHandler getObjectFromMethod(Class<? extends ValueHandler> valueHandlerClazz) {
+        if(Modifier.isAbstract(valueHandlerClazz.getModifiers())){
+            return null;
+        }
         ValueHandler valueHandler = null;
         try {
             valueHandler = valueHandlerClazz.getDeclaredConstructor().newInstance();

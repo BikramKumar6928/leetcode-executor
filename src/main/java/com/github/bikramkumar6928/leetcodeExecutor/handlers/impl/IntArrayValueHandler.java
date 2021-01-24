@@ -1,11 +1,15 @@
 package com.github.bikramkumar6928.leetcodeExecutor.handlers.impl;
 
-import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandler;
+import com.github.bikramkumar6928.leetcodeExecutor.handlers.abstracts.ArrayValueHandler;
 
-public class IntArrayValueHandler extends ValueHandler {
+import java.util.Arrays;
+
+public class IntArrayValueHandler extends ArrayValueHandler {
+
     @Override
-    public Object takeInput(String value) {
-        return new int[]{1, 2, 3};
+    protected Object processMatch(String foundMatch) {
+        String[] stringArray = getStringArrayFromMatch(foundMatch);
+        return Arrays.stream(stringArray).map(Integer::parseInt).mapToInt(integer -> integer).toArray();
     }
 
     @Override

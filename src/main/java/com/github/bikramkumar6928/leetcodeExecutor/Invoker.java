@@ -7,6 +7,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,6 +22,7 @@ public class Invoker {
         List<Method> publicMethods = Arrays
                 .stream(clazz.getDeclaredMethods())
                 .filter(Invoker::isPublicMethod)
+                .filter(Invoker::removeMainMethod)
                 .collect(Collectors.toList());
         ListMultimap<Method,Object> mapListObject = ArrayListMultimap.create();
         for (Method publicMethod : publicMethods) {
@@ -39,6 +41,10 @@ public class Invoker {
             callMethod(method, classObject, parameters);
         }
 
+    }
+
+    private static boolean removeMainMethod(Method method) {
+        return !StringUtils.equals(method.getName(), "main");
     }
 
     private static void callMethod(Method method, Object classObject, Object[] parameters){

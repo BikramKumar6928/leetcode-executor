@@ -1,6 +1,7 @@
 package com.github.bikramkumar6928.leetcodeExecutor.handlers.impl;
 
 import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandler;
+import com.github.bikramkumar6928.leetcodeExecutor.utils.ValueHandlerUtils;
 
 import java.util.regex.Pattern;
 
@@ -11,6 +12,11 @@ public class IntegerValueHandler extends ValueHandler {
     @Override
     protected Pattern getPattern() {
         return pattern;
+    }
+
+    @Override
+    protected Object getRandom() {
+        return ValueHandlerUtils.generateRandomInteger();
     }
 
     @Override

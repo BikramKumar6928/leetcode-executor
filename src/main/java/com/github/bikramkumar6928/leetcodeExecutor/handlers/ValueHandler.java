@@ -1,15 +1,27 @@
 package com.github.bikramkumar6928.leetcodeExecutor.handlers;
 
 import com.github.bikramkumar6928.leetcodeExecutor.beans.UpdatedInputAndParameter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public abstract class ValueHandler {
 
     protected abstract Pattern getPattern();
 
     public UpdatedInputAndParameter takeInput(String value) {
+        if(StringUtils.isEmpty(value)){
+            Object randomGeneratedObject = getRandom();
+            log.info("Randomly generated object for class {} is: {}", getClazz(), getPrintableObject(randomGeneratedObject));
+            return UpdatedInputAndParameter
+                    .builder()
+                    .updatedInput(value)
+                    .parameter(randomGeneratedObject)
+                    .build();
+        }
         Matcher matcher = getPattern().matcher(value);
         boolean isMatchFound = matcher.find();
         if(!isMatchFound){
@@ -22,6 +34,12 @@ public abstract class ValueHandler {
                 .parameter(processedMatch)
                 .updatedInput(value.substring(matcher.end()))
                 .build();
+    }
+
+    protected abstract Object getRandom();
+
+    protected String getPrintableObject(Object object){
+        return object.toString();
     }
 
     protected abstract Object processMatch(String foundMatch);

@@ -14,6 +14,21 @@ Thus, you are saved from writing boiler plate code for executing the code.
 
 ## Usage:-
 
+These steps are common for both usages:-
+
+1. Create a maven project.
+2. Add leetcode-executer as a dependency.
+
+```xml
+<dependency>
+    <groupId>org.github.bikramkumar6928</groupId>
+    <artifactId>leetcode-executer</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
+### For standalone programs:-
+
 Create a class where the input is to be passed:- 
 
 ```java
@@ -41,3 +56,22 @@ Mark the debugger and debug the method.
 
 It just works.
 
+
+### For Intellij plugin leetcode editor
+
+Add this code to the CodeTemplate:-
+
+```
+${question.content}
+  
+package leetcode.editor.en;
+public class $!velocityTool.camelCaseName(${question.titleSlug}){
+    public static void main(String[] args) {
+         Solution solution = new $!velocityTool.camelCaseName(${question.titleSlug})().new Solution();
+         Invoker.invoke(solution, "");
+    }
+    ${question.code}
+}
+```
+
+**Please copy from the actual text written if the dollar sign is shown as "backslash dollar" `$`.**

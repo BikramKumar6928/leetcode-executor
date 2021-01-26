@@ -59,6 +59,10 @@ It just works.
 
 ### For Intellij plugin leetcode editor
 
+Set CodeFileName as:-
+```
+$!velocityTool.camelCaseName(${question.titleSlug})
+```
 Add this code to the CodeTemplate:-
 
 ```

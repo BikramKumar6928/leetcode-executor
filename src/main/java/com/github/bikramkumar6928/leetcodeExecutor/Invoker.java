@@ -18,12 +18,22 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class Invoker {
-    public static void invoke(Class<?> clazz, String input){
-        List<Method> publicMethods = Arrays
-                .stream(clazz.getDeclaredMethods())
-                .filter(Invoker::isPublicMethod)
-                .filter(Invoker::removeMainMethod)
-                .collect(Collectors.toList());
+    public static void invoke(Object classObject, String input){
+        Class<?> clazz = classObject.getClass();
+        List<Method> publicMethods = getPublicMethodsFromClass(clazz);
+        ListMultimap<Method, Object> mapListObject = getMethodParameters(input, publicMethods);
+        log.trace("The map is {}", mapListObject);
+        executeMethods(classObject, publicMethods, mapListObject);
+    }
+
+    private static void executeMethods(Object classObject, List<Method> publicMethods, ListMultimap<Method, Object> mapListObject) {
+        for (Method method : publicMethods) {
+            Object[] parameters = getParametersForMethod(method, mapListObject);
+            callMethod(method, classObject, parameters);
+        }
+    }
+
+    private static ListMultimap<Method, Object> getMethodParameters(String input, List<Method> publicMethods) {
         ListMultimap<Method,Object> mapListObject = ArrayListMultimap.create();
         for (Method publicMethod : publicMethods) {
             Class<?>[] parameterClasses = publicMethod.getParameterTypes();
@@ -34,13 +44,20 @@ public class Invoker {
                 mapListObject.put(publicMethod, updatedInputAndParameter.getParameter());
             }
         }
-        log.trace("The map is {}", mapListObject);
-        Object classObject = getClassObject(clazz);
-        for (Method method : publicMethods) {
-            Object[] parameters = getParametersForMethod(method, mapListObject);
-            callMethod(method, classObject, parameters);
-        }
+        return mapListObject;
+    }
 
+    public static void invoke(Class<?> clazz, String input){
+        Object classObject = getClassObject(clazz);
+        invoke(classObject, input);
+    }
+
+    private static List<Method> getPublicMethodsFromClass(Class<?> clazz) {
+        return Arrays
+                .stream(clazz.getDeclaredMethods())
+                .filter(Invoker::isPublicMethod)
+                .filter(Invoker::removeMainMethod)
+                .collect(Collectors.toList());
     }
 
     private static boolean removeMainMethod(Method method) {

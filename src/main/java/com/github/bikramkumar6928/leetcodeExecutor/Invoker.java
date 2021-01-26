@@ -69,7 +69,6 @@ public class Invoker {
             method.setAccessible(true);
             method.invoke(classObject, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
             throw new RuntimeException("Unable to call method" , e);
         }
     }
@@ -83,7 +82,6 @@ public class Invoker {
         try {
             return clazz.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
             throw new RuntimeException("Unable to instantiate object", e);
         }
     }

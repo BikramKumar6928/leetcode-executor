@@ -66,6 +66,7 @@ public class Invoker {
 
     private static void callMethod(Method method, Object classObject, Object[] parameters){
         try {
+            method.setAccessible(true);
             method.invoke(classObject, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();

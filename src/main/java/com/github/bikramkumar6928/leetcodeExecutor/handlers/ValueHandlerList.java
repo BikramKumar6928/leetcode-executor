@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ValueHandlerUtils {
+public class ValueHandlerList {
     private static List<ValueHandler> valueHandlers;
 
     @NonNull
@@ -36,7 +36,7 @@ public class ValueHandlerUtils {
         Set<Class<? extends ValueHandler>> valueHandlerSet = reflections.getSubTypesOf(ValueHandler.class);
         return valueHandlerSet
                 .stream()
-                .map(ValueHandlerUtils::getObjectFromMethod)
+                .map(ValueHandlerList::getObjectFromMethod)
 //                Remove if there were errors while creating the object
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

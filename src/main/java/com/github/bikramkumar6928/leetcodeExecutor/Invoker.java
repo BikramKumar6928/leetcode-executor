@@ -2,7 +2,7 @@ package com.github.bikramkumar6928.leetcodeExecutor;
 
 import com.github.bikramkumar6928.leetcodeExecutor.beans.UpdatedInputAndParameter;
 import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandler;
-import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandlerUtils;
+import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandlerList;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import lombok.NonNull;
@@ -38,7 +38,7 @@ public class Invoker {
         for (Method publicMethod : publicMethods) {
             Class<?>[] parameterClasses = publicMethod.getParameterTypes();
             for (Class<?> parameterClass : parameterClasses) {
-                ValueHandler valueHandler = ValueHandlerUtils.getObject(parameterClass);
+                ValueHandler valueHandler = ValueHandlerList.getObject(parameterClass);
                 UpdatedInputAndParameter updatedInputAndParameter = valueHandler.takeInput(input);
                 input = updatedInputAndParameter.getUpdatedInput();
                 mapListObject.put(publicMethod, updatedInputAndParameter.getParameter());

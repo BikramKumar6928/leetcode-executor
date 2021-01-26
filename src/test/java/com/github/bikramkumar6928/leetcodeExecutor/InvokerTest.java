@@ -27,4 +27,10 @@ public class InvokerTest {
     public void testInvokerWithStringInput(){
         Invoker.invoke(TestClassWithStringParameter.class, "\"sample stdring\"");
     }
+
+    @Test
+    public void testInvokerWithEmptyString(){
+        Invoker.invoke(TestClassWithStringParameter.class, "");
+        Invoker.invoke(TestClassWithIntegerAndIntArrayParam.class, "");
+    }
 }

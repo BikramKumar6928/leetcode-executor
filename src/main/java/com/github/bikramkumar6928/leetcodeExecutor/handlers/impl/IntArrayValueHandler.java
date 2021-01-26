@@ -13,7 +13,7 @@ public class IntArrayValueHandler extends ArrayValueHandler {
     }
 
     @Override
-    public Class<?> getClazz() {
+    protected Class<?> getClazz() {
         return int[].class;
     }
 }

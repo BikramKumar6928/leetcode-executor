@@ -18,7 +18,7 @@ public abstract class ArrayValueHandler extends ValueHandler {
     }
 
     @Override
-    public Pattern getPattern() {
+    protected Pattern getPattern() {
         return pattern;
     }
 }

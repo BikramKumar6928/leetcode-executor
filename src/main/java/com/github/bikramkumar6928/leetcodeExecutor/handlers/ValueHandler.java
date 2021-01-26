@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public abstract class ValueHandler {
 
-    public abstract Pattern getPattern();
+    protected abstract Pattern getPattern();
 
     public UpdatedInputAndParameter takeInput(String value) {
         Matcher matcher = getPattern().matcher(value);
@@ -26,5 +26,5 @@ public abstract class ValueHandler {
 
     protected abstract Object processMatch(String foundMatch);
 
-    public abstract Class<?> getClazz();
+    protected abstract Class<?> getClazz();
 }

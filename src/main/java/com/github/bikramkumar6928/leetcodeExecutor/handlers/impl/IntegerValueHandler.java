@@ -1,6 +1,5 @@
 package com.github.bikramkumar6928.leetcodeExecutor.handlers.impl;
 
-import com.github.bikramkumar6928.leetcodeExecutor.beans.UpdatedInputAndParameter;
 import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandler;
 
 import java.util.regex.Pattern;
@@ -10,7 +9,7 @@ public class IntegerValueHandler extends ValueHandler {
     private static final Pattern pattern = Pattern.compile("\\d+\\s*");
 
     @Override
-    public Pattern getPattern() {
+    protected Pattern getPattern() {
         return pattern;
     }
 
@@ -20,7 +19,7 @@ public class IntegerValueHandler extends ValueHandler {
     }
 
     @Override
-    public Class<?> getClazz() {
+    protected Class<?> getClazz() {
         return Integer.class;
     }
 }

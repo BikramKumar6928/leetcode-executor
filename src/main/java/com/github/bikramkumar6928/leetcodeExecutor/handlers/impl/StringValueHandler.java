@@ -8,7 +8,7 @@ public class StringValueHandler extends ValueHandler {
     private static final Pattern pattern = Pattern.compile("\"(.*?)\"");
 
     @Override
-    public Pattern getPattern() {
+    protected Pattern getPattern() {
         return pattern;
     }
 
@@ -18,7 +18,7 @@ public class StringValueHandler extends ValueHandler {
     }
 
     @Override
-    public Class<?> getClazz() {
+    protected Class<?> getClazz() {
         return String.class;
     }
 }

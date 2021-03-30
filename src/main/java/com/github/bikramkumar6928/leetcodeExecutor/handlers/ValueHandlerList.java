@@ -2,6 +2,7 @@ package com.github.bikramkumar6928.leetcodeExecutor.handlers;
 
 import com.github.bikramkumar6928.leetcodeExecutor.exceptions.UnimplementedClassException;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ValueHandlerList {
     private static List<ValueHandler> valueHandlers;
 
@@ -46,15 +48,14 @@ public class ValueHandlerList {
         if(Modifier.isAbstract(valueHandlerClazz.getModifiers())){
             return null;
         }
-        ValueHandler valueHandler = null;
         try {
-            valueHandler = valueHandlerClazz.getDeclaredConstructor().newInstance();
+            return valueHandlerClazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException |
                 IllegalAccessException |
                 InvocationTargetException |
                 NoSuchMethodException e) {
-            e.printStackTrace();
+            log.error("Failed while creating object for value handler", e);
         }
-        return valueHandler;
+        return null;
     }
 }

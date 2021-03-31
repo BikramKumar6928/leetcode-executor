@@ -39,7 +39,7 @@ public abstract class ValueHandler {
 
     protected abstract Object getRandom();
 
-    protected String getPrintableObject(Object object){
+    public String getPrintableObject(Object object){
         return object.toString();
     }
 

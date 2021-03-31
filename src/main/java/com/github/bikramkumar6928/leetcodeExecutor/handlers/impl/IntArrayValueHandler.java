@@ -34,7 +34,7 @@ public class IntArrayValueHandler extends ArrayValueHandler {
     }
 
     @Override
-    protected String getPrintableObject(Object object) {
+    public String getPrintableObject(Object object) {
         assertThat(object, instanceOf(getClazz()));
         int[] objectAsIntArray = (int[]) object;
         return Arrays

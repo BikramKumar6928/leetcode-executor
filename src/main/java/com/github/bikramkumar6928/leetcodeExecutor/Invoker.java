@@ -3,6 +3,7 @@ package com.github.bikramkumar6928.leetcodeExecutor;
 import com.github.bikramkumar6928.leetcodeExecutor.beans.UpdatedInputAndParameter;
 import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandler;
 import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandlerList;
+import com.github.bikramkumar6928.leetcodeExecutor.utils.ValueHandlerUtils;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import lombok.NonNull;
@@ -29,7 +30,8 @@ public class Invoker {
     private static void executeMethods(Object classObject, List<Method> publicMethods, ListMultimap<Method, Object> mapListObject) {
         for (Method method : publicMethods) {
             Object[] parameters = getParametersForMethod(method, mapListObject);
-            callMethod(method, classObject, parameters);
+            Object output = callMethod(method, classObject, parameters);
+            log.info("Output is \n{}", ValueHandlerUtils.getPrintableString(output));
         }
     }
 
@@ -64,10 +66,10 @@ public class Invoker {
         return !StringUtils.equals(method.getName(), "main");
     }
 
-    private static void callMethod(Method method, Object classObject, Object[] parameters){
+    private static Object callMethod(Method method, Object classObject, Object[] parameters){
         try {
             method.setAccessible(true);
-            method.invoke(classObject, parameters);
+            return method.invoke(classObject, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Unable to call method" , e);
         }

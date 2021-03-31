@@ -15,7 +15,7 @@ public abstract class ValueHandler {
     public UpdatedInputAndParameter takeInput(String value) {
         if(StringUtils.isEmpty(value)){
             Object randomGeneratedObject = getRandom();
-            log.info("Randomly generated object for class {} is: {}", getClazz(), getPrintableObject(randomGeneratedObject));
+            log.info("Randomly generated object for class {} is: \n{}", getClazz(), getPrintableObject(randomGeneratedObject));
             return UpdatedInputAndParameter
                     .builder()
                     .updatedInput(value)
@@ -29,6 +29,7 @@ public abstract class ValueHandler {
         }
         String foundMatch = matcher.group().trim();
         Object processedMatch = processMatch(foundMatch);
+        log.info("Input object for class {} is: \n{}", getClazz(), getPrintableObject(processedMatch));
         return UpdatedInputAndParameter
                 .builder()
                 .parameter(processedMatch)

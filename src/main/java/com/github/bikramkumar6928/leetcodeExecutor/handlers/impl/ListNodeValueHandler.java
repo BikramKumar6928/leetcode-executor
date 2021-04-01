@@ -4,8 +4,10 @@ import com.github.bikramkumar6928.leetcodeExecutor.handlers.abstracts.ArrayValue
 import com.github.bikramkumar6928.leetcodeExecutor.leetcodeObjects.ListNode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
@@ -44,9 +46,14 @@ public class ListNodeValueHandler extends ArrayValueHandler {
     public String getPrintableObject(Object object) {
         assertThat(object, instanceOf(getClazz()));
         List<Integer> listNodeAsList = new ArrayList<>();
+        Set<ListNode> listNodeSet = new HashSet<>();
         ListNode listNode = (ListNode) object;
         while(Objects.nonNull(listNode)){
+            if(listNodeSet.contains(listNode)){
+                return String.format("%s and looped at %s", listNodeAsList.toString(), listNode.val);
+            }
             listNodeAsList.add(listNode.val);
+            listNodeSet.add(listNode);
             listNode = listNode.next;
         }
         return listNodeAsList.toString();

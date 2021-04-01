@@ -1,6 +1,7 @@
 package com.github.bikramkumar6928.leetcodeExecutor;
 
 import com.github.bikramkumar6928.leetcodeExecutor.sampleClasses.TestClassWithIntegerAndIntArrayParam;
+import com.github.bikramkumar6928.leetcodeExecutor.sampleClasses.TestClassWithListNodeParameterWithLoop;
 import com.github.bikramkumar6928.leetcodeExecutor.sampleClasses.TestClassWithPrivateMethod;
 import com.github.bikramkumar6928.leetcodeExecutor.sampleClasses.TestClassWithStringParameter;
 import org.junit.Test;
@@ -32,5 +33,10 @@ public class InvokerTest {
     public void testInvokerWithEmptyString(){
         Invoker.invoke(TestClassWithStringParameter.class, "");
         Invoker.invoke(TestClassWithIntegerAndIntArrayParam.class, "");
+    }
+
+    @Test
+    public void testListNodeWithLoop(){
+        Invoker.invoke(TestClassWithListNodeParameterWithLoop.class, "[1, 2, 3, 4, 5]");
     }
 }

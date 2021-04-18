@@ -1,6 +1,7 @@
 package com.github.bikramkumar6928.leetcodeExecutor.handlers;
 
 import com.github.bikramkumar6928.leetcodeExecutor.beans.UpdatedInputAndParameter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,6 +13,7 @@ public abstract class ValueHandler {
 
     protected abstract Pattern getPattern();
 
+    @NonNull
     public UpdatedInputAndParameter takeInput(String value) {
         if(StringUtils.isEmpty(value)){
             Object randomGeneratedObject = getRandom();
@@ -25,7 +27,7 @@ public abstract class ValueHandler {
         Matcher matcher = getPattern().matcher(value);
         boolean isMatchFound = matcher.find();
         if(!isMatchFound){
-            throw new RuntimeException("Match not for Integer in string " + value);
+            throw new RuntimeException("Match not found in string " + value);
         }
         String foundMatch = matcher.group().trim();
         Object processedMatch = processMatch(foundMatch);

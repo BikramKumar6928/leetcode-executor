@@ -4,8 +4,6 @@ import com.github.bikramkumar6928.leetcodeExecutor.beans.UpdatedInputAndParamete
 import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandler;
 import com.github.bikramkumar6928.leetcodeExecutor.handlers.ValueHandlerList;
 import com.github.bikramkumar6928.leetcodeExecutor.utils.ValueHandlerUtils;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,40 +11,23 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Slf4j
 public class Invoker {
     public static void invoke(Object classObject, String input){
         Class<?> clazz = classObject.getClass();
-        List<Method> publicMethods = getPublicMethodsFromClass(clazz);
-        ListMultimap<Method, Object> mapListObject = getMethodParameters(input, publicMethods);
-        log.trace("The map is {}", mapListObject);
-        executeMethods(classObject, publicMethods, mapListObject);
-    }
-
-    private static void executeMethods(Object classObject, List<Method> publicMethods, ListMultimap<Method, Object> mapListObject) {
-        for (Method method : publicMethods) {
-            Object[] parameters = getParametersForMethod(method, mapListObject);
-            Object output = callMethod(method, classObject, parameters);
-            log.info("Output is \n{}", ValueHandlerUtils.getPrintableString(output));
+        Map<String, Method> publicMethods = getPublicMethodsFromClass(clazz);
+        if(publicMethods.size() == 1){
+            Method publicMethod = publicMethods.values().iterator().next();
+            executeSinglePublicMethod(classObject, input, publicMethod);
         }
-    }
-
-    private static ListMultimap<Method, Object> getMethodParameters(String input, List<Method> publicMethods) {
-        ListMultimap<Method,Object> mapListObject = ArrayListMultimap.create();
-        for (Method publicMethod : publicMethods) {
-            Class<?>[] parameterClasses = publicMethod.getParameterTypes();
-            for (Class<?> parameterClass : parameterClasses) {
-                ValueHandler valueHandler = ValueHandlerList.getObject(parameterClass);
-                UpdatedInputAndParameter updatedInputAndParameter = valueHandler.takeInput(input);
-                input = updatedInputAndParameter.getUpdatedInput();
-                mapListObject.put(publicMethod, updatedInputAndParameter.getParameter());
-            }
+        else{
+            executeMultiplePublicMethod(classObject, input, publicMethods);
         }
-        return mapListObject;
     }
 
     public static void invoke(Class<?> clazz, String input){
@@ -54,16 +35,73 @@ public class Invoker {
         invoke(classObject, input);
     }
 
-    private static List<Method> getPublicMethodsFromClass(Class<?> clazz) {
-        return Arrays
-                .stream(clazz.getDeclaredMethods())
-                .filter(Invoker::isPublicMethod)
-                .filter(Invoker::removeMainMethod)
-                .collect(Collectors.toList());
+    private static void executeMultiplePublicMethod(Object classObject, String input, Map<String, Method>  publicMethods) {
+        if(StringUtils.isEmpty(input)){
+            throw new IllegalArgumentException("Input cannot be empty for multiple public methods.");
+        }
+        UpdatedInputAndParameter methodCallOrderInputAndParameter = getUpdatedInputAndParameter(input, String[].class);
+        input = methodCallOrderInputAndParameter.getUpdatedInput();
+        String[] methodCallOrder = (String[]) methodCallOrderInputAndParameter.getParameter();
+        UpdatedInputAndParameter methodParametersInputAndParameter = getUpdatedInputAndParameter(input, String[].class);
+        String[] methodInputs = (String[]) methodParametersInputAndParameter.getParameter();
+        String remainingInput = methodParametersInputAndParameter.getUpdatedInput();
+        if(StringUtils.isNotEmpty(remainingInput)){
+            log.warn("Input should be empty after all parameters. Input: {}", remainingInput);
+        }
+        if(methodInputs.length != methodCallOrder.length){
+            throw new IllegalArgumentException("Number of method calls and parameters sets are not same");
+        }
+        for (int i = 0; i < methodCallOrder.length; i++) {
+            String methodName = methodCallOrder[i];
+            String methodInput = methodInputs[i];
+            Method method = publicMethods.get(methodName);
+//            If method name is class name, it is a constructor. Create an object for this.
+            if(StringUtils.equals(methodName,classObject.getClass().getName())){
+                List<Object> parameterOrder = getSingleMethodParameters(input, method);
+                classObject = getClassObject(classObject.getClass(), parameterOrder.toArray());
+                continue;
+            }
+            executeSinglePublicMethod(classObject, methodInput, method);
+        }
     }
 
-    private static boolean removeMainMethod(Method method) {
-        return !StringUtils.equals(method.getName(), "main");
+    private static void executeSinglePublicMethod(Object classObject, String input,  Method publicMethod) {
+        List<Object> parameterOrder = getSingleMethodParameters(input, publicMethod);
+        log.trace("The map is {}", parameterOrder);
+        Object[] parameters = parameterOrder.toArray();
+        Object output = callMethod(publicMethod, classObject, parameters);
+        log.info("Output is \n{}", ValueHandlerUtils.getPrintableString(output));
+    }
+
+    @NonNull
+    private static List<Object> getSingleMethodParameters(String input, Method publicMethod) {
+        List<Object> parameterOrder = new ArrayList<>();
+        Class<?>[] parameterClasses = publicMethod.getParameterTypes();
+        for (Class<?> parameterClass : parameterClasses) {
+            UpdatedInputAndParameter updatedInputAndParameter = getUpdatedInputAndParameter(input, parameterClass);
+            input = updatedInputAndParameter.getUpdatedInput();
+            parameterOrder.add(updatedInputAndParameter.getParameter());
+        }
+        return parameterOrder;
+    }
+
+    @NonNull
+    private static UpdatedInputAndParameter getUpdatedInputAndParameter(String input, Class<?> parameterClass) {
+        ValueHandler valueHandler = ValueHandlerList.getObject(parameterClass);
+        return valueHandler.takeInput(input);
+    }
+
+    @NonNull
+    private static Map<String, Method> getPublicMethodsFromClass(Class<?> clazz) {
+        Map<String, Method> methodMap = new HashMap<>();
+        Method[] declaredMethods = clazz.getDeclaredMethods();
+        for (Method method : declaredMethods) {
+            if (!isPublicMethod(method)) {
+                continue;
+            }
+            methodMap.put(method.getName(), method);
+        }
+        return methodMap;
     }
 
     private static Object callMethod(Method method, Object classObject, Object[] parameters){
@@ -75,14 +113,19 @@ public class Invoker {
         }
     }
 
-    private static Object[] getParametersForMethod(Method method, ListMultimap<Method, Object> mapListObject) {
-        return mapListObject.get(method).toArray();
-    }
-
     @NonNull
     private static Object getClassObject(Class<?> clazz) {
         try {
             return clazz.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException("Unable to instantiate object", e);
+        }
+    }
+
+    @NonNull
+    private static Object getClassObject(Class<?> clazz, Object[] parameters) {
+        try {
+            return clazz.getConstructor().newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException("Unable to instantiate object", e);
         }

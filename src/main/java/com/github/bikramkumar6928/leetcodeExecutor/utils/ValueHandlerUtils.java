@@ -24,7 +24,11 @@ public class ValueHandlerUtils {
             return null;
         }
         Class<?> clazz = output.getClass();
-        ValueHandler valueHandler = ValueHandlerList.getObject(clazz);
-        return valueHandler.getPrintableObject(output);
+        try {
+            return ValueHandlerList.getObject(clazz).getPrintableObject(output);
+        }
+        catch (Exception e){
+            return "[Non-standard object]";
+        }
     }
 }
